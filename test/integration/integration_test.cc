@@ -54,6 +54,20 @@ INSTANTIATE_TEST_SUITE_P(IpVersions, IntegrationTest,
                          testing::ValuesIn(TestEnvironment::getIpVersionsForTest()),
                          TestUtility::ipTestParamsToString);
 
+// fixfix
+TEST_P(IntegrationTest, BadPrebindSocketOptionWithReusePort) {
+  config_helper_.addConfigModifier([&](envoy::config::bootstrap::v3::Bootstrap& bootstrap) -> void {
+    auto* listener = bootstrap.mutable_static_resources()->mutable_listeners(0);
+    listener->set_reuse_port(true);
+    auto socket_option = listener->add_socket_options();
+    socket_option->set_state(
+      envoy::config::core::v3::SocketOption::SocketState::SocketOption_SocketState_STATE_PREBIND);
+    socket_option->set_level(10000); // Invalid level.
+    socket_option->set_int_value(10000); // Invalid value.
+  });
+  initialize();
+}
+
 // Make sure we have correctly specified per-worker performance stats.
 TEST_P(IntegrationTest, PerWorkerStatsAndBalancing) {
   concurrency_ = 2;

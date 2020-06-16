@@ -106,6 +106,7 @@ Network::SocketSharedPtr ListenSocketFactoryImpl::createListenSocketAndApplyOpti
         fmt::format("{}: Setting socket options {}", listener_name_, ok ? "succeeded" : "failed");
     if (!ok) {
       ENVOY_LOG(warn, "{}", message);
+      ASSERT(false); // fixfix
       throw EnvoyException(message);
     } else {
       ENVOY_LOG(debug, "{}", message);
